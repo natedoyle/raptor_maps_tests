@@ -1,0 +1,23 @@
+ /***
+  * First problem I ran into was each page presented an error
+  * with "Uncaught SyntaxError: expected expression, got '<'"
+  * This happens when just visiting the site manually and isn't a cypress problem.
+  * I worked around it by adding some specific error handling to e2e.js
+  */
+ 
+ 
+ /***
+  * I had some trouble getting the entire blocks of text to be equal for tests two and three.
+  * The work I did is below (lines 13-20). I went with the somewhat weaker contains to get an assert
+  
+  // .then((text) => {
+      //   expect(text).to.contain(assert_text)
+      // })
+      // .should('equal', assert_text)
+      // .should('contain', assert_text)
+      // .invoke('text').then((text) => {
+      //   cy.log(text)
+      // })
+
+*/
+
