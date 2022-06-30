@@ -2,9 +2,10 @@
 const assert_text = 'Warning: Use https://docs.raptormaps.com/v3.0/reference#search_solar_farms_by_name\nEndpoint to retrieve all solar farms that you have access to view in a particular organization'
 const auth_token = 'WyIyMDA3IiwiJDUkcm91bmRzPTUzNTAwMCQ4czdkZ0lyZkxRalN1TXlkJHZJbXJPMzFVdERYZDFlTDRZTmdDaHJwUjBhRmIydW0vampvQWYzTE1iUzYiXQ.Yk-w_w.dGRb3xdsG6TgzOTHYdhh0eSmHWk'
 const org_id = '228'
+let farm_uuid = ''
 
 // visit the careers page and assert the top nav is highlighted orange to insure we're on the correct page.
-describe.skip('Visit Careers Page', () => {
+describe('Visit Careers Page', () => {
   it('Checks the career page for location indicator', () => {
     cy.visit('/careers')
     cy.get('#menu-item-6784 > a').should('have.css', 'color', 'rgb(241, 143, 1)')
@@ -13,7 +14,7 @@ describe.skip('Visit Careers Page', () => {
 
 // the navbar dropdown has a direct link to the technology page which is a confusing UX.
 // 
-describe.skip('Navigate to Technology Page on Navbar Link', () => {
+describe('Navigate to Technology Page on Navbar Link', () => {
   it('Clicks on top level nav bar link that heads drop down', () => {
     // adding intercept to ensure page load before element seek
     cy.intercept({
@@ -43,7 +44,7 @@ describe.skip('Navigate to Technology Page on Navbar Link', () => {
 
 // this is the same test as above but using the actual dropdown option instead of clicking on 
 // the url associated with the top level navbar option
-describe.skip('Navigate to technology page using dropdown option', () => {
+describe('Navigate to technology page using dropdown option', () => {
   it('passes', () => {
     cy.intercept({
       method: 'GET',
@@ -72,9 +73,8 @@ describe.skip('Navigate to technology page using dropdown option', () => {
 
 });
 
-describe.skip('Open external knowledge hub from technology page', () => {
+describe('Open external knowledge hub from technology page', () => {
   it('opens a new window with knowledge hub as target', () => {
-    // I broke this into two tests which is what we did before at previous job
     cy.visit('/rmtechnology')
     cy.get('#tech-api h1')
       .scrollIntoView()
@@ -85,7 +85,7 @@ describe.skip('Open external knowledge hub from technology page', () => {
   })
 })
 
-describe.skip('validate solar farms api reference page', () => {
+describe('validate solar farms api reference page', () => {
   it('checks text on page', () => {
     cy.visit('https://docs.raptormaps.com/reference/reference-getting-started#reference-getting-started')
     // this is a brittle construction. Would probably consider adding some test ids.
@@ -123,11 +123,29 @@ describe('validate try it function', () => {
       .type(org_id)
     cy.get('button.rm-TryIt')
       .click()
+    // I'm sure there's a better way to present this data other than cy.log
     cy.wait('@tryIt')
       .then(({response}) => {
-        let farm = response.body['solar_farms']
-        let qa_farm = farm.filter(function(item) { return item.name === 'Test Postman Routes - QA Team'})
-        cy.log(qa_farm)
+        let farm = JSON.parse(response.body)
+        let qa_farm = farm['solar_farms'].find(item => { return item.name === 'Test Postman Routes - QA Team'})
+        cy.log(qa_farm['uuid'])
+        farm_uuid = qa_farm['uuid']
       })
+  })
+})
+
+// this is not a very good test since it relies on data gathered from the previous test.
+// I wanted to show I was retrieving the UUID in a manner other than cy.log
+describe('extra credit with uuid', () => {
+  it('calls farm by uuid', () => {
+    cy.visit('https://docs.raptormaps.com/reference/apiv2solar_farmssolar_farm_uuid')
+    cy.get('#APIAuth-Authentication-Token')
+      .type(auth_token)
+    cy.get('#query-apiv2solarFarmssolarFarmUuid_org_id')
+      .type(org_id)
+    cy.get('#path-apiv2solarFarmssolarFarmUuid_solar_farm_uuid')
+      .type(farm_uuid)
+    cy.get('button.rm-TryIt')
+      .click()
   })
 })

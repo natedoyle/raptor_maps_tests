@@ -1,4 +1,4 @@
- /***
+ /**
   * First problem I ran into was each page presented an error
   * with "Uncaught SyntaxError: expected expression, got '<'"
   * This happens when just visiting the site manually and isn't a cypress problem.
@@ -6,7 +6,7 @@
   */
  
  
- /***
+ /**
   * I had some trouble getting the entire blocks of text to be equal for tests two and three.
   * The work I did is below (lines 13-20). I went with the somewhat weaker contains to get an assert
   
@@ -21,3 +21,13 @@
 
 */
 
+/**
+ * For the fifth test I ran into some problems where cypress wouldn't allow the sidebar to display without
+ * first pressing the menu button that appears when the screen is too small. I worked around this by doing a
+ * force click on the hidden element. 
+ */
+
+/**
+ * The sixth test gave rise to a seventh, unasked for test. I wasn't satisfying with cy.log for the uuid so I 
+ * created a test that used it on the next page.
+ */
